@@ -48,6 +48,7 @@ func bloggerListURLs() []string {
 	if err != nil {
 		fmt.Println(err)
 	}
+
 	fmt.Println("Successfully Opened CSV file \n")
 	defer csvFile.Close()
 
