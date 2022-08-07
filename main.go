@@ -50,6 +50,7 @@ func bloggerListURLs() []string {
 	}
 
 	fmt.Println("Successfully Opened CSV file \n")
+
 	defer csvFile.Close()
 
 	// Reading the CSV-file
@@ -100,17 +101,21 @@ func getFeedData(s []string) []bloggerFeed {
 	return feedlist
 }
 
-func sortFunc(b []bloggerFeed) []bloggerFeed {
+func sort_trim_Func(b []bloggerFeed) []bloggerFeed {
 	bloggers := b
 
 	// prints a single entry of publishtime  we put into the slice of bloggerFeed's (struct)
-	fmt.Println(bloggers[1].Published)
+	// fmt.Println(bloggers[1].Published)
 
 	//Sorting the entries based on the Published date
 	sort.Slice(bloggers, func(i, j int) bool { return bloggers[i].Published.After(*bloggers[j].Published) })
-	//fmt.Println(bloggers)
 
-	return bloggers
+	//fmt.Println(bloggers)
+	sortedBloggers := bloggers
+	numOfBloggers := 8 // bumber of bloggers you want
+	reducedBloggers := sortedBloggers[:numOfBloggers]
+
+	return reducedBloggers
 
 	/*
 		(for debugging use)
@@ -120,49 +125,20 @@ func sortFunc(b []bloggerFeed) []bloggerFeed {
 		}*/
 }
 
-func reduceBloggers(c []bloggerFeed) []bloggerFeed {
-	sortedBloggers := c
-	numOfBloggers := 8
-	reducedBloggers := sortedBloggers[:numOfBloggers]
-
-	/*ar reducedBloggers []bloggerFeed
-
-	for f := 0; f < numOfBloggers; f++ {
-		reducedBloggers1 := append(reducedBloggers, sortedBloggers[f])
-		fmt.Println(reducedBloggers1)
-		fmt.Println(f + 1)
-	}
-
-	finalSelection := reducedBloggers
-	return finalSelection */
-	return reducedBloggers
-}
-
 func produceJSON(d []bloggerFeed) {
 
 	reducedBloggers := d
-	//encoder := json.NewEncoder(os.Stdout)
-	//encodedJSON := encoder.MarshalJson(reducedBloggers)
+
+	// makes JSON out of data from the slice of bloggerFeed struct
 	u, err := json.Marshal(reducedBloggers)
 	fmt.Println(u)
 
+	// writes the JSON to a file
 	os.WriteFile("C:/Users/Jonathan/Documents/GitHub/RSSprogram/blogs.json", u, 0644)
 
 	check(err)
 }
 
-/*d1 := []byte("hello\ngo\n")
-  err := os.WriteFile("/tmp/dat1", d1, 0644)
-  check(err)
-
-
-  f, err := os.Create("/tmp/dat2")
-  check(err)*/
-
-//defer f.Close()
-
-// Skriv reducedBloggers till JSON-fil
-
 func main() {
-	produceJSON(reduceBloggers(sortFunc(getFeedData(bloggerListURLs()))))
+	produceJSON(sort_trim_Func(getFeedData(bloggerListURLs())))
 }
