@@ -25,14 +25,6 @@ type bloggerFeed struct {
 	Published   *time.Time `json:"Published"`
 }
 
-type exportList struct {
-	Entry []bloggerFeed
-}
-
-type Writer interface {
-	Write(p []byte) (n int, err error)
-}
-
 func check(e error) {
 	if e != nil {
 		panic(e)
